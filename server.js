@@ -18,8 +18,14 @@ const port = 3000;
 
 app.use(express.static('public'));
 
+const handlebars = expressHandlebars({
+    handlebars : allowInsecurePrototypeAccess(Handlebars)
+})
+
 app.use(express.json());
 
+app.engine('handlebars', handlebars);
+app.set('view engine', 'handlebars');
 
 const restaurantChecks = [
     check('name').not().isEmpty().trim().escape(),
@@ -29,7 +35,8 @@ const restaurantChecks = [
 
 app.get('/restaurants', async (req, res) => {
     const restaurants = await Restaurant.findAll();
-    res.json(restaurants);
+    //res.json(restaurants);
+  res.render('restaurants', {restaurants})
 });
 
 app.get('/restaurants/:id', async (req, res) => {
@@ -38,7 +45,30 @@ app.get('/restaurants/:id', async (req, res) => {
             include: MenuItem
         }
     });
-    res.json(restaurant);
+    //res.json(restaurant);
+    res.render("restaurant", {restaurant})
+});
+
+app.get('/restaurants/:id/menus', async (req, res) => {
+    const restaurant = await Restaurant.findByPk(req.params.id, {include: {
+            model: Menu,
+            include: MenuItem
+        }
+    });
+    //res.json(restaurant);
+    res.render("menus", {restaurant})
+});
+
+app.get('/restaurants/:id/menus/:menuId', async (req, res) => {
+    const restaurant = await Restaurant.findByPk(req.params.id, {include: {
+            model: Menu,
+            include: MenuItem,
+            
+        }
+        
+    });
+    //res.json(restaurant);
+    res.render("menuItems", {restaurant})
 });
 
 app.post('/restaurants', restaurantChecks, async (req, res) => {

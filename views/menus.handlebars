@@ -1,0 +1,20 @@
+      
+
+        <section>
+    <h2>Single Restaurant: {{restaurant.name}}</h2>       
+        
+        <h3>Menus:</h3>
+        
+          <ul>
+            {{#each restaurant.Menus}}
+            
+                <li><a href="./menus/{{this.id}}">{{this.title}}</a></li>
+            
+            {{/each}}
+
+
+        </ul>
+        <img class="item-image" src="{{restaurant.image}}" />
+        
+
+</section>
