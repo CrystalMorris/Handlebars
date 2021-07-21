@@ -3,16 +3,18 @@
     
   
 <h3>{{thisMenu.title}}</h3>
-   <ul>
+  <table>
+     
        {{#each items}}
-
-         <li> {{this.name}}_ {{money this.price}}</li>
-
+       <tr>
+            <td>{{this.name}}</td>
+            <td>{{money this.price}}</td>
+    </tr>
        {{/each}}
-
-    <img class="item-img" src="{{restaurant.image}}"/>
-
-
+    
+    
+</table>
+<img class="item-img" src="{{restaurant.image}}"/>
 </div>
 
       
