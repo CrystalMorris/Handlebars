@@ -3,12 +3,13 @@ const { check, validationResult } = require('express-validator');
 const Handlebars = require('handlebars')
 const expressHandlebars = require('express-handlebars')
 const {allowInsecurePrototypeAccess} = require('@handlebars/allow-prototype-access')
-
+const helpers = require('handlebars-helpers');
 const Restaurant = require('./models/restaurant');
 const Menu = require('./models/menu');
 const MenuItem = require('./models/menuItem');
-
+const number = helpers.number();
 const initialiseDb = require('./initialiseDb');
+
 initialiseDb();
 
 const app = express();
@@ -19,12 +20,21 @@ const port = 3000;
 app.use(express.static('public'));
 
 const handlebars = expressHandlebars({
-    handlebars : allowInsecurePrototypeAccess(Handlebars)
+        handlebars : allowInsecurePrototypeAccess(Handlebars),
+        helpers:{
+            money: (num) => new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2
+            }).format(num),
+            
+        }
 })
 
 app.use(express.json());
+app.use(express.urlencoded({extended: true}))
 
-app.engine('handlebars', handlebars);
+app.engine('handlebars', handlebars );
 app.set('view engine', 'handlebars');
 
 const restaurantChecks = [
@@ -63,12 +73,19 @@ app.get('/restaurants/:id/menus/:menuId', async (req, res) => {
     const restaurant = await Restaurant.findByPk(req.params.id, {include: {
             model: Menu,
             include: MenuItem,
-            
+        }    
+    }); 
+    const thisMenu = await Menu.findByPk(req.params.menuId);
+    const items = await MenuItem.findAll({
+        where: {
+            menuId : req.params.menuId
         }
-        
-    });
-    //res.json(restaurant);
-    res.render("menuItems", {restaurant})
+    })
+    // const thisMenu = menuId;
+    console.log(items);
+    res.render("menuItems", {restaurant :restaurant,
+    thisMenu : thisMenu,
+    items: items})
 });
 
 app.post('/restaurants', restaurantChecks, async (req, res) => {
