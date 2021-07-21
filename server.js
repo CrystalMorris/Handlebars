@@ -3,11 +3,9 @@ const { check, validationResult } = require('express-validator');
 const Handlebars = require('handlebars')
 const expressHandlebars = require('express-handlebars')
 const {allowInsecurePrototypeAccess} = require('@handlebars/allow-prototype-access')
-const helpers = require('handlebars-helpers');
 const Restaurant = require('./models/restaurant');
 const Menu = require('./models/menu');
 const MenuItem = require('./models/menuItem');
-const number = helpers.number();
 const initialiseDb = require('./initialiseDb');
 
 initialiseDb();
